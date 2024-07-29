@@ -13,7 +13,7 @@ dataroot = '/home/mahsun/nuscenes/dataset/v1.0-mini'
 nusc = NuScenes(version='v1.0-mini', dataroot=dataroot, verbose=True)
 
 # Örnek bir senaryo seçin.
-sample = nusc.sample[10]
+sample = nusc.sample[100]
 
 # Ön kameraya ve ön radara ait örnek veri noktalarını (sample data) bulun.
 front_camera_data = None
