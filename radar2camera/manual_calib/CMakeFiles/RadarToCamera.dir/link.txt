@@ -1,0 +1,2 @@
+/usr/bin/ar qc lib/libRadarToCamera.a  CMakeFiles/RadarToCamera.dir/src/run_radar2camera.cpp.o
+/usr/bin/ranlib lib/libRadarToCamera.a

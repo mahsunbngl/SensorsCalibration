@@ -3,6 +3,8 @@ project(RadarToCamera)
 set(CMAKE_CXX_FLAGS "-std=c++11 -g -Wall")
 set(CMAKE_CXX_STANDARD 14)
 
+set(OpenCV_DIR /usr/local/lib/pkgconfig/)
+
 find_package(Pangolin REQUIRED)
 include_directories(${Pangolin_INCLUDE_DIRS})
 link_directories(${Pangolin_LIBRARY_DIRS})
@@ -12,7 +14,7 @@ include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${OpenCV_LIBRARY_DIRS})
 
 find_package(Boost REQUIRED system)
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 2.4 REQUIRED)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${EIGEN_ROOT})

@@ -176,6 +176,8 @@ bool ManualCalibration(int key_input) {
   char table[] = {'q', 'a', 'w', 's', 'e', 'd', 'r', 'f', 't', 'g', 'y', 'h'};
   bool real_hit = false;
   for (int32_t i = 0; i < 12; i++) {
+    std::cout << "table[i] "<< table[i] << std::endl;
+    std::cout << "key_input: " << key_input << std::endl;
     if (key_input == table[i]) {
       calibration_matrix_ = calibration_matrix_ * modification_list_[i];
       real_hit = true;
@@ -206,24 +208,25 @@ bool ReadRadarPoint(const std::string &radar_csv_path,
       std::string position_x_str;
       std::string position_y_str;
       int index = 0;
-      while (getline(ss, str, ',')) {
+      while (getline(ss, str, ',')) 
+      {
+        // if (index == 0) {
+        //   time_str = str;
+        //   if (whether_first) {
+        //     first_time_str = str;
+        //     whether_first = false;
+        //   } else {
+        //     long long gap = std::stoll(time_str) - std::stoll(first_time_str);
+        //     if (gap > MAX_RADAR_TIME_GAP) {
+        //       std::cout << "radar point size: " << radar_points->points.size()
+        //                 << std::endl;
+        //       return true;
+        //     }
+        //   }
+        // }
         if (index == 0) {
-          time_str = str;
-          if (whether_first) {
-            first_time_str = str;
-            whether_first = false;
-          } else {
-            long long gap = std::stoll(time_str) - std::stoll(first_time_str);
-            if (gap > MAX_RADAR_TIME_GAP) {
-              std::cout << "radar point size: " << radar_points->points.size()
-                        << std::endl;
-              return true;
-            }
-          }
-        }
-        if (index == 4) {
           position_x_str = str;
-        } else if (index == 5) {
+        } else if (index == 1) {
           position_y_str = str;
         }
         index++;
@@ -288,7 +291,8 @@ bool ReadRadarPoint(const std::string &radar_csv_path,
   return true;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+ {
   if (argc != 6 && argc != 7) {
     cout << "Usage: ./run_radar2camera <image_path> <radar_file_path> "
             "<intrinsic_json> <homo_json> <extrinsic_json>"
@@ -350,6 +354,7 @@ int main(int argc, char **argv) {
   CalibrationInit(json_param);
   Projector projector;
   projector.init(img, homograph, bv_width, bv_height);
+  std::cout << "projector init done!\n";
   projector.loadPointCloud(pcd);
 
   std::cout << "width:" << width << " , height:" << height << std::endl;
@@ -359,13 +364,13 @@ int main(int argc, char **argv) {
   pangolin::CreateWindowAndBind("radar2camera player",
                                 (width + bv_width) / 0.9 * 0.5, height * 0.5);
 
-  glEnable(GL_DEPTH_TEST);
+  // glEnable(GL_DEPTH_TEST);
 
   pangolin::OpenGlRenderState s_cam(
       pangolin::ProjectionMatrix(1024, 768, 500, 500, 512, 389, 0.1, 1000),
       pangolin::ModelViewLookAt(0, 0, 100, 0, 0, 0, 0.0, 1.0, 0.0));
 
-  pangolin::View &project_image =
+    pangolin::View &project_image =
       pangolin::Display("project")
           .SetBounds(0.0, 1.0, 0.1, 0.7, -1.0 * width / height)
           .SetLock(pangolin::LockLeft, pangolin::LockTop);

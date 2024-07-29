@@ -213,6 +213,10 @@ int main(int argc, char **argv) {
   string intrinsic_json = argv[3];
   string extrinsic_json = argv[4];
   cv::Mat img = cv::imread(camera_path);
+
+  std::cout << img.cols << "-----------------·\n";
+  std::cout << img.rows << "-----------------·\n";
+
   std::cout << intrinsic_json << std::endl;
   pcl::PointCloud<pcl::PointXYZI>::Ptr cloud(
       new pcl::PointCloud<pcl::PointXYZI>);

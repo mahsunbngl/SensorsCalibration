@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 #include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
 #include <string>
 
 #include <vector>
@@ -122,7 +123,8 @@ public:
 
   void setPointSize(int size) { point_size_ = size; }
 
-  bool loadPointCloud(pcl::PointCloud<pcl::PointXYZ> pcl) {
+  bool loadPointCloud(pcl::PointCloud<pcl::PointXYZ> pcl) 
+  {
     oriCloud = cv::Mat(cv::Size(pcl.points.size(), 3), CV_32FC1);
     for (size_t i = 0; i < pcl.points.size(); ++i) {
       oriCloud.at<float>(0, i) = pcl.points[i].x;
@@ -131,6 +133,8 @@ public:
       // intensitys.push_back(pcl.points[i].intensity);
     }
     // ROIFilter();
+
+    std::cout << "load point cloud success" << std::endl;
     return true;
   }
 
@@ -182,7 +186,8 @@ public:
 
     // cv::Mat projCloud2d =
     //     K * (R_ * oriCloud + repeat(T_, 1, oriCloud.cols));
-    cv::Mat transCloud2d = R_ * oriCloud + repeat(T_, 1, oriCloud.cols);
+    cv::Mat transCloud2d = R_ * oriCloud + repeat(T_, 1 , oriCloud.cols);
+
     float maxDist = 0;
     float maxx = 0;
     std::vector<Pt> points;
@@ -272,6 +277,7 @@ public:
     R1 = cv::Mat(3, 3, CV_32FC1, r);
     T1 = cv::Mat(3, 1, CV_32FC1, t);
     // cv::Mat img = cv::imread(imgName);
+
     ProjectToRawMat(img, K1, D1, R1, T1, current_frame, bv_frame);
   }
 
