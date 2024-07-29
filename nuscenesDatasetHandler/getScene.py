@@ -8,12 +8,18 @@ import open3d as o3d
 import shutil
 import pandas as pd
 
+import json
+
+########################################################
+# --------- Get scene and intrinsic parameters ---------
+########################################################
+
 # nuScenes veri setinin yüklü olduğu yolu belirtin.
-dataroot = '/home/mahsun/nuscenes/dataset/v1.0-mini'
+dataroot = '/home/mahsun/masterThesisStudies/nuscenes/dataset/v1.0-mini'
 nusc = NuScenes(version='v1.0-mini', dataroot=dataroot, verbose=True)
 
 # Örnek bir senaryo seçin.
-sample = nusc.sample[100]
+sample = nusc.sample[80]
 
 # Ön kameraya ve ön radara ait örnek veri noktalarını (sample data) bulun.
 front_camera_data = None
@@ -80,8 +86,9 @@ shutil.copy(front_camera_filepath, "/home/mahsun/masterThesisStudies/SensorsCali
 shutil.copy(front_camera_filepath, "/home/mahsun/masterThesisStudies/SensorsCalibration/radar2camera/manual_calib/data/nuscenes/0.png")
 shutil.copy(front_radar_filepath, "/home/mahsun/masterThesisStudies/SensorsCalibration/radar2camera/manual_calib/data/nuscenes/0.pcd")
 
-
+########################################################
 # ----------------- Convert pcd to csv -----------------
+########################################################
 
 # Load the point cloud
 pcd = o3d.io.read_point_cloud("/home/mahsun/masterThesisStudies/SensorsCalibration/radar2camera/manual_calib/data/nuscenes/0.pcd")
@@ -92,3 +99,38 @@ df = pd.DataFrame(points, columns=["x", "y" , "z"])
 
 # Save to CSV
 df.to_csv("/home/mahsun/masterThesisStudies/SensorsCalibration/radar2camera/manual_calib/data/nuscenes/output.csv", index=False)
+
+
+########################################################
+# ------------- Change intrinsic Matrix ----------------
+########################################################
+
+def jsonsUpdates(jsonPath):
+    # Load JSON data from the file
+    with open(jsonPath, 'r') as file:
+        data = json.load(file)
+
+# Modify the data
+    data["center_camera-intrinsic"]["param"]["img_dist_w"] = 1600
+    data["center_camera-intrinsic"]["param"]["img_dist_h"] = 900
+
+    data["center_camera-intrinsic"]["param"]["cam_K"]["data"] = front_camera_intrinsics
+
+    data["center_camera-intrinsic"]["param"]["cam_dist"]["data"] = [[0.0,0.0,0.0,0.0]]
+
+    # Write the updated data back to the JSON file
+    with open(jsonPath, 'w') as file:
+        json.dump(data, file, indent=4)
+        
+
+# Path to your JSON file
+radarJson= '/home/mahsun/masterThesisStudies/SensorsCalibration/radar2camera/manual_calib/data/nuscenes/center_camera-intrinsic.json'
+lidarJson = '/home/mahsun/masterThesisStudies/SensorsCalibration/lidar2camera/manual_calib/data/nuscenes/center_camera-intrinsic.json'
+
+jsonsUpdates(radarJson)
+jsonsUpdates(lidarJson)
+
+
+
+
+
